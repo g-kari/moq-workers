@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MoQ 視聴</title>
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+      body {
+        font-family: system-ui, sans-serif;
+        background: #0f0f0f;
+        color: #e8e8e8;
+        min-height: 100dvh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+      }
+
+      h1 { font-size: 1.2rem; font-weight: 600; margin-bottom: 1.5rem; color: #fff; }
+
+      moq-watch {
+        width: 100%;
+        max-width: 900px;
+        border-radius: 12px;
+        overflow: hidden;
+        background: #111;
+      }
+
+      .error {
+        color: #fc8181;
+        font-size: 0.9rem;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>📺 MoQ 視聴</h1>
+    <moq-watch id="viewer" muted></moq-watch>
+    <p id="error" class="error"></p>
+
+    <script type="module" src="/src/watch.ts"></script>
+  </body>
+</html>

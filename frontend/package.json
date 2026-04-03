@@ -1,0 +1,17 @@
+{
+  "name": "moq-workers-frontend",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@moq/publish": "^0.2.3",
+    "@moq/watch": "^0.2.3"
+  },
+  "devDependencies": {
+    "vite": "^6.2.6",
+    "typescript": "^5.8.3"
+  }
+}
