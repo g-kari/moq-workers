@@ -1,0 +1,9 @@
+# ローカル開発用シークレット（.dev.vars にコピーして使用）
+# .dev.vars は .gitignore に含まれており、コミットされません
+
+# JWK形式の署名鍵（@moq/token用）
+# 生成方法: npx moq-token generate --algorithm HS256
+MOQ_SIGNING_KEY=<your-jwk-json-string>
+
+# API認証キー
+API_KEY=dev-secret-key
