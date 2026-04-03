@@ -272,6 +272,18 @@
         <div class="dbg-row"><span class="dbg-key">name attr:</span><span class="dbg-val" id="dbg-pubAttrName">-</span></div>
         <div class="dbg-row"><span class="dbg-key">source attr:</span><span class="dbg-val" id="dbg-pubAttrSource">-</span></div>
 
+        <div class="dbg-title" style="margin-top:0.4rem">WebTransport 接続状態</div>
+        <div class="dbg-row"><span class="dbg-key">conn.url:</span><span class="dbg-val" id="dbg-connUrl">-</span></div>
+        <div class="dbg-row"><span class="dbg-key">conn.status:</span><span class="dbg-val" id="dbg-connStatus">-</span></div>
+        <div class="dbg-row"><span class="dbg-key">broadcast.enabled:</span><span class="dbg-val" id="dbg-bcEnabled">-</span></div>
+
+        <div class="dbg-title" style="margin-top:0.4rem">メディアソース状態 (moq-publish-ui が上書き)</div>
+        <div class="dbg-row"><span class="dbg-key">state.source:</span><span class="dbg-val" id="dbg-stateSource">-</span></div>
+        <div class="dbg-row"><span class="dbg-key">state.muted:</span><span class="dbg-val" id="dbg-stateMuted">-</span></div>
+        <div class="dbg-row"><span class="dbg-key">state.invisible:</span><span class="dbg-val" id="dbg-stateInvisible">-</span></div>
+        <div class="dbg-row"><span class="dbg-key">broadcast.audio.src:</span><span class="dbg-val" id="dbg-audioSrc">-</span></div>
+        <div class="dbg-row"><span class="dbg-key">broadcast.video.src:</span><span class="dbg-val" id="dbg-videoSrc">-</span></div>
+
         <div class="dbg-title" style="margin-top:0.4rem">コンポーネント内部状態</div>
         <div class="dbg-row"><span class="dbg-key">broadcast obj:</span><span class="dbg-val" id="dbg-broadcastObj">-</span></div>
         <div class="dbg-row"><span class="dbg-key">connection:</span><span class="dbg-val" id="dbg-conn">-</span></div>
@@ -318,14 +330,37 @@
         dbg("pubAttrName", publisher.getAttribute("name"));
         dbg("pubAttrSource", publisher.getAttribute("source"));
 
+        // WebTransport 接続状態
+        const conn = publisher.connection;
+        if (conn) {
+          try { dbg("connUrl", conn.url?.peek?.()?.toString()?.substring(0,60) + "…" ?? "-"); } catch(e) { dbg("connUrl", "err"); }
+          try {
+            const cs = conn.status?.get?.();
+            const csClass = cs === "connected" ? "ok" : cs === "connecting" ? "warn" : "err";
+            dbg("connStatus", cs ?? conn.status ?? "-", csClass);
+          } catch(e) { dbg("connStatus", "エラー: " + e.message, "err"); }
+        }
+
+        // メディアソース状態
+        if (publisher.broadcast) {
+          try { dbg("bcEnabled", String(publisher.broadcast.enabled?.get?.()), publisher.broadcast.enabled?.get?.() ? "ok" : "warn"); } catch(e) {}
+          try { dbg("audioSrc", publisher.broadcast.audio?.source?.get?.() ? "あり ✓" : "なし", publisher.broadcast.audio?.source?.get?.() ? "ok" : "warn"); } catch(e) {}
+          try { dbg("videoSrc", publisher.broadcast.video?.source?.get?.() ? "あり ✓" : "なし", publisher.broadcast.video?.source?.get?.() ? "ok" : "warn"); } catch(e) {}
+        }
+        if (publisher.state) {
+          try { dbg("stateSource", String(publisher.state.source?.get?.()), publisher.state.source?.get?.() ? "ok" : "err"); } catch(e) {}
+          try { dbg("stateMuted", String(publisher.state.muted?.get?.())); } catch(e) {}
+          try { dbg("stateInvisible", String(publisher.state.invisible?.get?.())); } catch(e) {}
+        }
+
         // コンポーネント内部状態を探索
         const bc = publisher.broadcast;
         if (bc) {
           dbg("broadcastObj", "存在する ✓", "ok");
           dbg("broadcastKeys", Object.keys(bc).join(", "));
           try {
-            const conn = bc.connection?.get?.();
-            dbg("conn", conn ?? "(get()なし)", conn ? "ok" : "warn");
+            const connVal = bc.connection?.get?.();
+            dbg("conn", connVal ?? "(Signal型?)", connVal ? "ok" : "warn");
           } catch(e) {
             dbg("conn", "エラー: " + e.message, "err");
           }
