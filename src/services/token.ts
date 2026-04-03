@@ -8,6 +8,7 @@ export type Permission = "publish" | "subscribe" | "both";
 export interface TokenResult {
   token: string;
   url: string;
+  root: string;
   expiresAt: string;
 }
 
@@ -31,8 +32,8 @@ export async function issueToken(
   };
 
   const token = await sign(key, claims);
-  const url = `${MOQ_RELAY_URL}/${root}`;
+  const url = MOQ_RELAY_URL;
   const expiresAt = new Date(exp * 1000).toISOString();
 
-  return { token, url, expiresAt };
+  return { token, url, root, expiresAt };
 }

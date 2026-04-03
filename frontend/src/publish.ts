@@ -50,7 +50,7 @@ startBtn.addEventListener("click", async () => {
       body: JSON.stringify({ permissions: "publish", expiresIn: 86400 }),
     });
     if (!pubTokenRes.ok) throw new Error("トークン取得に失敗しました");
-    const { data: pubToken } = await pubTokenRes.json() as { data: { token: string; url: string } };
+    const { data: pubToken } = await pubTokenRes.json() as { data: { token: string; url: string; root: string } };
 
     // 視聴者トークン取得
     const subTokenRes = await fetch(`${API_BASE}/api/rooms/${room.id}/token`, {
@@ -59,13 +59,15 @@ startBtn.addEventListener("click", async () => {
       body: JSON.stringify({ permissions: "subscribe", expiresIn: 86400 }),
     });
     if (!subTokenRes.ok) throw new Error("トークン取得に失敗しました");
-    const { data: subToken } = await subTokenRes.json() as { data: { token: string; url: string } };
+    const { data: subToken } = await subTokenRes.json() as { data: { token: string; url: string; root: string } };
 
     // 配信コンポーネントに接続先を設定
-    const relayUrl = pubToken.url;
-    const subRelayUrl = subToken.url;
+    // URL はリレーベース URL のみ（パスなし）、ルーム ID は MoQ ネームスペースとして name に含める
+    const relayUrl = `${pubToken.url}?jwt=${pubToken.token}`;
+    const subRelayUrl = `${subToken.url}?jwt=${subToken.token}`;
+    const broadcastName = `${pubToken.root}/${BROADCAST_NAME}`;
     publisher.setAttribute("url", relayUrl);
-    publisher.setAttribute("name", BROADCAST_NAME);
+    publisher.setAttribute("name", broadcastName);
     publisherUi.classList.add("visible");
 
     // デバッグパネルに情報を渡す
@@ -76,7 +78,7 @@ startBtn.addEventListener("click", async () => {
     // 視聴 URL を生成して表示
     const watchUrl = new URL("/watch.html", window.location.href);
     watchUrl.searchParams.set("url", subRelayUrl);
-    watchUrl.searchParams.set("name", BROADCAST_NAME);
+    watchUrl.searchParams.set("name", `${subToken.root}/${BROADCAST_NAME}`);
     const watchUrlStr = watchUrl.toString();
 
     shareUrlEl.textContent = watchUrlStr;
