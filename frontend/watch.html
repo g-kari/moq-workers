@@ -4,46 +4,142 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MoQ 視聴</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Reddit+Sans:ital,wdth,wght@0,75..100,200..900;1,75..100,200..900&family=IBM+Plex+Sans+JP:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <style>
+      :root {
+        --color-bg: #fefbfb;
+        --color-text: #483030;
+        --color-muted: #a39696;
+        --color-border: #dfd7d7;
+        --color-surface: #f2f0f0;
+        --color-accent: #73862d;
+        --color-danger: #ff340b;
+        --font: "Reddit Sans", "IBM Plex Sans JP", BlinkMacSystemFont, sans-serif;
+        --ease: cubic-bezier(0.16, 1, 0.3, 1);
+        --transition: all 0.4s var(--ease);
+        --max-w: 768px;
+        --radius: 12px;
+        --radius-sm: 8px;
+      }
+
       *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+      html { scroll-behavior: smooth; }
+
       body {
-        font-family: system-ui, sans-serif;
-        background: #0f0f0f;
-        color: #e8e8e8;
+        font-family: var(--font);
+        font-size: 16px;
+        color: var(--color-text);
+        background: var(--color-bg);
+        line-height: 1.65;
+        -webkit-font-smoothing: antialiased;
         min-height: 100dvh;
+      }
+
+      a { color: inherit; text-decoration: none; }
+      button { cursor: pointer; font-family: var(--font); border: none; }
+
+      /* ---- Header ---- */
+      #site-header {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: var(--color-bg);
+        border-bottom: 1px solid var(--color-border);
+      }
+      .header-inner {
+        max-width: var(--max-w);
+        margin: 0 auto;
+        padding: 0 1.25rem;
+        min-height: 56px;
         display: flex;
-        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+      }
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 700;
+        font-size: 1rem;
+        color: var(--color-text);
+        white-space: nowrap;
+        flex-shrink: 0;
+        transition: var(--transition);
+      }
+      .logo:hover { opacity: 0.75; }
+
+      .btn-ghost {
+        display: inline-flex;
         align-items: center;
         justify-content: center;
-        padding: 1rem;
+        gap: 6px;
+        padding: 8px 16px;
+        background: transparent;
+        color: var(--color-muted);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-sm);
+        font-size: 0.875rem;
+        font-weight: 500;
+        transition: var(--transition);
+        white-space: nowrap;
+      }
+      .btn-ghost:hover { color: var(--color-text); background: var(--color-surface); }
+      .btn-ghost.btn-sm { padding: 6px 12px; font-size: 0.8rem; }
+
+      /* ---- Layout ---- */
+      main {
+        max-width: var(--max-w);
+        margin: 0 auto;
+        padding: 2rem 1.25rem 4rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
       }
 
-      h1 { font-size: 1.2rem; font-weight: 600; margin-bottom: 1.5rem; color: #fff; }
-
+      /* ---- Player ---- */
       moq-watch-ui {
         width: 100%;
-        max-width: 900px;
-        border-radius: 12px;
+        border-radius: var(--radius);
         overflow: hidden;
-        background: #111;
+        border: 1px solid var(--color-border);
+        background: #1a1510;
       }
 
+      /* ---- Error ---- */
       .error {
-        color: #fc8181;
-        font-size: 0.9rem;
+        font-size: 0.875rem;
+        color: var(--color-danger);
         text-align: center;
+        padding: 1rem;
       }
     </style>
   </head>
   <body>
-    <h1>📺 MoQ 視聴</h1>
-    <moq-watch-ui>
-      <moq-watch id="viewer" muted>
-        <canvas></canvas>
-      </moq-watch>
-    </moq-watch-ui>
-    <p id="error" class="error"></p>
+    <header id="site-header">
+      <div class="header-inner">
+        <a href="/" class="logo">
+          <span>📺</span>
+          <span>MoQ 視聴</span>
+        </a>
+        <a href="/" class="btn-ghost btn-sm">🔴 配信する</a>
+      </div>
+    </header>
+
+    <main>
+      <moq-watch-ui>
+        <moq-watch id="viewer" muted>
+          <canvas></canvas>
+        </moq-watch>
+      </moq-watch-ui>
+      <p id="error" class="error"></p>
+    </main>
 
     <script type="module" src="/src/watch.ts"></script>
   </body>
