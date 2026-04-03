@@ -62,8 +62,8 @@ startBtn.addEventListener("click", async () => {
     const { data: subToken } = await subTokenRes.json() as { data: { token: string; url: string } };
 
     // 配信コンポーネントに接続先を設定
-    const relayUrl = `${pubToken.url}?jwt=${pubToken.token}`;
-    const subRelayUrl = `${subToken.url}?jwt=${subToken.token}`;
+    const relayUrl = pubToken.url;
+    const subRelayUrl = subToken.url;
     publisher.setAttribute("url", relayUrl);
     publisher.setAttribute("name", BROADCAST_NAME);
     publisherUi.classList.add("visible");

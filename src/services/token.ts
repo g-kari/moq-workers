@@ -1,7 +1,7 @@
 import { load, sign } from "@moq/token";
 import type { Claims } from "@moq/token";
 
-const MOQ_RELAY_URL = "https://draft-14.cloudflare.mediaoverquic.com";
+const MOQ_RELAY_URL = "https://cdn.moq.dev";
 
 export type Permission = "publish" | "subscribe" | "both";
 
