@@ -11,6 +11,7 @@ const statusEl = document.getElementById("status") as HTMLParagraphElement;
 const shareBox = document.getElementById("shareBox") as HTMLDivElement;
 const shareUrlEl = document.getElementById("shareUrl") as HTMLDivElement;
 const copyBtn = document.getElementById("copyBtn") as HTMLButtonElement;
+const publisherUi = document.getElementById("publisherUi") as HTMLElement;
 const publisher = document.getElementById("publisher") as HTMLElement;
 
 function setStatus(msg: string, isError = false) {
@@ -64,7 +65,7 @@ startBtn.addEventListener("click", async () => {
     const relayUrl = `${pubToken.url}?jwt=${pubToken.token}`;
     publisher.setAttribute("url", relayUrl);
     publisher.setAttribute("name", BROADCAST_NAME);
-    publisher.classList.add("visible");
+    publisherUi.classList.add("visible");
 
     // 視聴 URL を生成して表示
     const watchUrl = new URL("/watch.html", window.location.href);

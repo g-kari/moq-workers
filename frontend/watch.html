@@ -21,7 +21,7 @@
 
       h1 { font-size: 1.2rem; font-weight: 600; margin-bottom: 1.5rem; color: #fff; }
 
-      moq-watch {
+      moq-watch-ui {
         width: 100%;
         max-width: 900px;
         border-radius: 12px;
@@ -38,7 +38,11 @@
   </head>
   <body>
     <h1>📺 MoQ 視聴</h1>
-    <moq-watch id="viewer" muted></moq-watch>
+    <moq-watch-ui>
+      <moq-watch id="viewer" muted>
+        <canvas></canvas>
+      </moq-watch>
+    </moq-watch-ui>
     <p id="error" class="error"></p>
 
     <script type="module" src="/src/watch.ts"></script>

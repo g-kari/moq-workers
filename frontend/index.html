@@ -84,15 +84,13 @@
       .status { font-size: 0.8rem; color: #888; }
       .status.error { color: #fc8181; }
 
-      moq-publish {
+      moq-publish-ui {
         display: none;
         width: 100%;
         max-width: 520px;
         margin-top: 1.5rem;
-        border-radius: 12px;
-        overflow: hidden;
       }
-      moq-publish.visible { display: block; }
+      moq-publish-ui.visible { display: block; }
     </style>
   </head>
   <body>
@@ -119,7 +117,11 @@
       </div>
     </div>
 
-    <moq-publish id="publisher" name="live"></moq-publish>
+    <moq-publish-ui id="publisherUi">
+      <moq-publish id="publisher" source="camera">
+        <video muted autoplay></video>
+      </moq-publish>
+    </moq-publish-ui>
 
     <script type="module" src="/src/publish.ts"></script>
   </body>
