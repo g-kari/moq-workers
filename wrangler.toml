@@ -1,4 +1,4 @@
-name = "moq-workers"
+name = "moq-workers-front"
 main = "src/index.ts"
 compatibility_date = "2026-04-03"
 
