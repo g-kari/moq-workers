@@ -1,7 +1,7 @@
 import "@moq/publish/element";
 import "@moq/publish/ui";
 
-const API_BASE = import.meta.env.PROD ? "" : "https://moq-workers.0g0.workers.dev";
+const API_BASE = "https://moq-workers.0g0.workers.dev";
 const BROADCAST_NAME = "live";
 
 const apiKeyInput = document.getElementById("apiKey") as HTMLInputElement;
