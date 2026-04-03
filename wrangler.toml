@@ -2,6 +2,9 @@ name = "moq-workers-front"
 main = "src/index.ts"
 compatibility_date = "2026-04-03"
 
+[assets]
+directory = "./frontend/dist"
+
 [[kv_namespaces]]
 binding = "ROOMS_KV"
 id = "5ae38436e0fb444587dbb7a2d87a9f57"
