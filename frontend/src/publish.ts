@@ -63,13 +63,19 @@ startBtn.addEventListener("click", async () => {
 
     // 配信コンポーネントに接続先を設定
     const relayUrl = `${pubToken.url}?jwt=${pubToken.token}`;
+    const subRelayUrl = `${subToken.url}?jwt=${subToken.token}`;
     publisher.setAttribute("url", relayUrl);
     publisher.setAttribute("name", BROADCAST_NAME);
     publisherUi.classList.add("visible");
 
+    // デバッグパネルに情報を渡す
+    (window as unknown as { __dbgUpdate?: (a: string, b: string, c: string) => void }).__dbgUpdate?.(
+      room.id, relayUrl, subRelayUrl
+    );
+
     // 視聴 URL を生成して表示
     const watchUrl = new URL("/watch.html", window.location.href);
-    watchUrl.searchParams.set("url", `${subToken.url}?jwt=${subToken.token}`);
+    watchUrl.searchParams.set("url", subRelayUrl);
     watchUrl.searchParams.set("name", BROADCAST_NAME);
     const watchUrlStr = watchUrl.toString();
 

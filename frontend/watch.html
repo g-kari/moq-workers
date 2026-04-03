@@ -119,6 +119,36 @@
         text-align: center;
         padding: 1rem;
       }
+
+      /* ---- Debug Panel ---- */
+      #debugPanel {
+        font-size: 0.78rem;
+        font-family: "IBM Plex Mono", "Fira Code", monospace;
+        background: #1a1510;
+        color: #e8d5c0;
+        border: 1px solid #3a2a20;
+        border-radius: var(--radius);
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+        line-height: 1.6;
+      }
+      #debugPanel .dbg-title {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: #a08060;
+        border-bottom: 1px solid #3a2a20;
+        padding-bottom: 0.4rem;
+        margin-bottom: 0.2rem;
+      }
+      #debugPanel .dbg-row { display: flex; gap: 0.5rem; }
+      #debugPanel .dbg-key { color: #a08060; min-width: 160px; flex-shrink: 0; }
+      #debugPanel .dbg-val { color: #e8d5c0; word-break: break-all; }
+      #debugPanel .dbg-val.ok { color: #8fb05a; }
+      #debugPanel .dbg-val.err { color: #ff6b4a; }
+      #debugPanel .dbg-val.warn { color: #e8b840; }
     </style>
   </head>
   <body>
@@ -139,8 +169,92 @@
         </moq-watch>
       </moq-watch-ui>
       <p id="error" class="error"></p>
+
+      <!-- デバッグパネル：すべての状態を表示 -->
+      <div id="debugPanel">
+        <div class="dbg-title">🔍 デバッグ情報 (500ms 更新)</div>
+
+        <div class="dbg-row"><span class="dbg-key">WebTransport:</span><span class="dbg-val" id="dbg-wt">-</span></div>
+        <div class="dbg-row"><span class="dbg-key">UserAgent:</span><span class="dbg-val" id="dbg-ua">-</span></div>
+
+        <div class="dbg-title" style="margin-top:0.4rem">URL パラメータ</div>
+        <div class="dbg-row"><span class="dbg-key">url param:</span><span class="dbg-val" id="dbg-urlParam">-</span></div>
+        <div class="dbg-row"><span class="dbg-key">name param:</span><span class="dbg-val" id="dbg-nameParam">-</span></div>
+
+        <div class="dbg-title" style="margin-top:0.4rem">moq-watch 属性</div>
+        <div class="dbg-row"><span class="dbg-key">url attr:</span><span class="dbg-val" id="dbg-viewerUrl">-</span></div>
+        <div class="dbg-row"><span class="dbg-key">name attr:</span><span class="dbg-val" id="dbg-viewerName">-</span></div>
+        <div class="dbg-row"><span class="dbg-key">muted attr:</span><span class="dbg-val" id="dbg-viewerMuted">-</span></div>
+
+        <div class="dbg-title" style="margin-top:0.4rem">コンポーネント内部状態</div>
+        <div class="dbg-row"><span class="dbg-key">broadcast obj:</span><span class="dbg-val" id="dbg-broadcastObj">-</span></div>
+        <div class="dbg-row"><span class="dbg-key">broadcast keys:</span><span class="dbg-val" id="dbg-broadcastKeys">-</span></div>
+        <div class="dbg-row"><span class="dbg-key">status:</span><span class="dbg-val" id="dbg-status">-</span></div>
+        <div class="dbg-row"><span class="dbg-key">connection:</span><span class="dbg-val" id="dbg-conn">-</span></div>
+        <div class="dbg-row"><span class="dbg-key">video keys:</span><span class="dbg-val" id="dbg-videoKeys">-</span></div>
+        <div class="dbg-row"><span class="dbg-key">audio keys:</span><span class="dbg-val" id="dbg-audioKeys">-</span></div>
+      </div>
     </main>
 
     <script type="module" src="/src/watch.ts"></script>
+    <script type="module">
+      const dbg = (id, val, cls) => {
+        const el = document.getElementById("dbg-" + id);
+        if (!el) return;
+        el.textContent = val ?? "-";
+        el.className = "dbg-val" + (cls ? " " + cls : "");
+      };
+
+      // 初期値
+      document.getElementById("dbg-ua").textContent = navigator.userAgent;
+      const wtAvail = typeof WebTransport !== "undefined";
+      document.getElementById("dbg-wt").textContent = wtAvail ? "利用可能 ✓" : "利用不可 ✗";
+      document.getElementById("dbg-wt").className = "dbg-val " + (wtAvail ? "ok" : "err");
+
+      const params = new URLSearchParams(window.location.search);
+      const urlParam = params.get("url");
+      const nameParam = params.get("name");
+      dbg("urlParam", urlParam ? urlParam.substring(0, 70) + "…" : "なし", urlParam ? "ok" : "err");
+      dbg("nameParam", nameParam || "なし", nameParam ? "ok" : "err");
+
+      const STATUS_CLASS = { live: "ok", offline: "warn", loading: "warn", unknown: "err" };
+
+      setInterval(() => {
+        const viewer = document.getElementById("viewer");
+        if (!viewer) return;
+
+        dbg("viewerUrl", viewer.getAttribute("url") ? viewer.getAttribute("url").substring(0, 60) + "…" : "-",
+          viewer.getAttribute("url") ? "ok" : null);
+        dbg("viewerName", viewer.getAttribute("name"));
+        dbg("viewerMuted", viewer.hasAttribute("muted") ? "true" : "false");
+
+        const bc = viewer.broadcast;
+        if (bc) {
+          dbg("broadcastObj", "存在する ✓", "ok");
+          dbg("broadcastKeys", Object.keys(bc).join(", "));
+          try {
+            const st = bc.status?.get?.();
+            dbg("status", st ?? "(get()なし)", STATUS_CLASS[st] || null);
+          } catch(e) { dbg("status", "エラー: " + e.message, "err"); }
+          try {
+            const conn = bc.connection?.get?.();
+            dbg("conn", conn ?? "(get()なし)", conn ? "ok" : "warn");
+          } catch(e) { dbg("conn", "エラー: " + e.message, "err"); }
+          try {
+            const vKeys = bc.video ? Object.keys(bc.video).join(", ") : "なし";
+            dbg("videoKeys", vKeys);
+          } catch(e) { dbg("videoKeys", "-"); }
+          try {
+            const aKeys = bc.audio ? Object.keys(bc.audio).join(", ") : "なし";
+            dbg("audioKeys", aKeys);
+          } catch(e) { dbg("audioKeys", "-"); }
+        } else {
+          dbg("broadcastObj", "未設定 (属性待ち)", "warn");
+          dbg("broadcastKeys", "-");
+          dbg("status", "-");
+          dbg("conn", "-");
+        }
+      }, 500);
+    </script>
   </body>
 </html>
