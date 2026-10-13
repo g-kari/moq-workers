@@ -53,6 +53,13 @@ cp .dev.vars.example .dev.vars  # fill in values
 npm run dev
 ```
 
+### オフライン回帰テスト
+
+Node.js 20.6 以上で `npm ci` の後に `npm test` と `npm run type-check` を実行できます。
+テストは実際のアプリを合成 KV で呼び出し、CORS の preflight、認証拒否、ルーム API を確認します。
+小さい空白付きヘッダーで CORS の文字列分割を検査し、長大な入力や実際の Cloudflare・メディアリレーは使いません。
+Hono 4.12.34 は GHSA-8j4g-w8fx-2239 の最小修正版です。他の脆弱性や本番稼働の検証を完了したことは意味しません。
+
 ### Setup secrets (first time)
 
 ```bash
