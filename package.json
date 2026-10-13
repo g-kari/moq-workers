@@ -6,10 +6,11 @@
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
     "type-check": "tsc --noEmit",
-    "lint": "eslint src"
+    "lint": "eslint src",
+    "test": "node --test tests/*.test.mjs"
   },
   "dependencies": {
-    "hono": "^4.12.27",
+    "hono": "^4.12.34",
     "@moq/token": "^0.1.2"
   },
   "devDependencies": {
