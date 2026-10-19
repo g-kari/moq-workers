@@ -10,7 +10,7 @@
     "test": "node --test tests/*.test.mjs"
   },
   "dependencies": {
-    "hono": "^4.12.34",
+    "hono": "^4.13.13",
     "@moq/token": "^0.1.2"
   },
   "devDependencies": {
