@@ -10,7 +10,7 @@
     "test:e2e:broadcast": "playwright test --config=playwright.prod.config.ts"
   },
   "dependencies": {
-    "@moq/publish": "^0.2.3",
+    "@moq/publish": "^0.5.0",
     "@moq/watch": "^0.2.3"
   },
   "devDependencies": {
